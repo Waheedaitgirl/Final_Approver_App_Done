@@ -13,7 +13,7 @@ import UnApprovedTimeSheetListScreen from '../screens/TimeSheetScreen/UnApproved
 import ExpensesListScreen from '../screens/ExpensesScreen';
 import ExpenseDetailsScreen from '../screens/ExpensesScreen/ExpansesDetails';
 import UnApprovedExpansesScreen from '../screens/ExpensesScreen/UnApprovedExpansesScreen';
-import ImageView from '../screens/ExpensesScreen/ImageView'
+import Preview from '../screens/ExpensesScreen/Preview'
 
 // Leaves Screen
 import AllLeavesScreen from '../screens/Leaves';
@@ -93,8 +93,8 @@ const MainStack = () => {
                 }}
             />
                <Stack.Screen 
-                name="ImageView" 
-                component={ImageView} 
+                name="Preview" 
+                component={Preview} 
                 options={{
                     headerShown: true
                 }}

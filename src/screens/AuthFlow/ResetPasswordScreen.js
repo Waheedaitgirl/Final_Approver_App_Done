@@ -39,7 +39,7 @@ const ResetPasswordScreen = ({navigation, route}) => {
     if (confirm_newpassword === newpassword) {
       setSuccessMessage('Password is correct');
     } else {
-      setConfirm_NewPasswordErrorMessage('Pasword mis-matched');
+      setConfirm_NewPasswordErrorMessage('Passwords do not match');
       return;
     }
 

@@ -151,21 +151,21 @@ const UnApprovedExpansesScreen = ({navigation, route}) => {
       billtype={item.expense_report_title}
       type={(item.type === 'employee') ? item.candidate_name : item.username}
       status={item.module_status_name}
-      date={moment(item.created_date).format('DD-MMM-YYYY')}
+      date={moment(item.created_date).format('MMM-DD-YYYY')}
       job={item.job_title}
       status_colour_code={item.status_colour_code}
       price={`$ ${parseFloat(item.total_amount).toFixed(2)}`}
       List={() => {
         navigation.navigate(MainRoutes.ExpenseDetailsScreen, {item,
-          onAccept: (id)=> AccpetExpense(id),
-          OnRejected:(id)=>RejectExpense(id)})} }
+          onAccept: (id,comment)=> AccpetExpense(id,comment),
+          OnRejected:(id,comment)=>RejectExpense(id,comment)})} }
       
     />
   );
   const onStatusHandler = useCallback((expense_id, statusCode) => {
     Alert.alert(
       'Attention!',
-      `Are you sure want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
+      `Are you sure you want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
       [
         {
           text: 'No',
@@ -202,7 +202,7 @@ const UnApprovedExpansesScreen = ({navigation, route}) => {
     );
   };
 
-  const AccpetExpense = id => {
+  const AccpetExpense = (id,comment) => {
     let module_status_id = status
       .filter(
         obj =>
@@ -215,6 +215,7 @@ const UnApprovedExpansesScreen = ({navigation, route}) => {
       '2',
       id,
       module_status_id,
+      comment
     )
       .then(response => {
         if (response.status) {
@@ -229,7 +230,7 @@ const UnApprovedExpansesScreen = ({navigation, route}) => {
       });
   };
 
-  const RejectExpense = id => {
+  const RejectExpense = (id,comment) => {
     let module_status_id = status
       .filter(
         obj =>
@@ -242,6 +243,7 @@ const UnApprovedExpansesScreen = ({navigation, route}) => {
       '2',
       id,
       module_status_id,
+      comment
     )
       .then(response => {
         if (response.status) {

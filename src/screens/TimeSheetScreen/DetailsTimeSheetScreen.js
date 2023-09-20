@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Text,
   StyleSheet,
+  ScrollView,
   Alert,
   // TouchableOpacity,
 } from 'react-native';
@@ -38,11 +39,13 @@ const DetailsSheetScreen = ({navigation, route}) => {
   const [time_types, setTimeTypes] = useState([]);
   const [error, setError] = useState(false);
   const [ext, setExt] = useState(null);
+  const [com,setCom] = useState('')
   const [filepath, setFilePath] = useState({
     path: null,
     ext: null,
     name: null,
   });
+
 
   let item = route.params.item;
   const status = item.module_status_name;
@@ -67,6 +70,7 @@ const DetailsSheetScreen = ({navigation, route}) => {
           }
           let data = groupBy(response.data.logs, 'type');
           setTimeSheetDetails(response.data.data);
+          setCom(response.data.data?.approver_comments)
           setTimeTypes(response.data.time_types);
           setLogs(Object.entries(data));
           setLoading(false);
@@ -106,7 +110,7 @@ const DetailsSheetScreen = ({navigation, route}) => {
   const onStatusHandler = useCallback((time_sheet_id, statusCode) => {
     Alert.alert(
       'Attention!',
-      `Are you Sure want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
+      `Are you sure you want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
       [
         {
           text: 'No',
@@ -116,8 +120,8 @@ const DetailsSheetScreen = ({navigation, route}) => {
           text: 'Yes',
           onPress: () => {
             statusCode === 1
-              ? route.params?.onAccept(time_sheet_id)
-              : route.params?.OnRejected(time_sheet_id);
+              ? route.params?.onAccept(time_sheet_id,com)
+              : route.params?.OnRejected(time_sheet_id,com);
 
             navigation?.goBack();
           },
@@ -125,37 +129,10 @@ const DetailsSheetScreen = ({navigation, route}) => {
         },
       ],
     );
-  }, []);
-
-  // const ExtensionsChange = useCallback((statusExt) => {
-  //   Alert.alert(
-  //     'Attention!',
-  //     `Are you Sure want to ${statusExt === 0 ? 'No' : 'yes'}?`,
-  //     [
-  //       {`
-  //         text: 'No',`
-  //         onPress: () => {},
-  //       },
-  //       {
-  //         text: 'Yes',
-  //         onPress: () => {
-  //            statusExt === 1
-  //             ?  file:
-  //                 'https://storage.googleapis.com/recruitbpm-document/' +
-  //                 'production' +
-  //                 '/' +
-  //                 time_sheet_details.document_file,
-  //          : null
-
-  //           navigation?.goBack();
-  //         },
-  //         style: 'cancel',
-  //       },
-  //     ],
-  //   );
-  // }, []);
+  }, [com]);
 
   if (loading || time_sheet_details === null) {
+    console.log('[Time_sheet_Details]' , time_sheet_details );
     return (
       <SafeAreaProvider>
         <CustomStatusBar />
@@ -206,7 +183,7 @@ const DetailsSheetScreen = ({navigation, route}) => {
           onPress={() => navigation.goBack()}
           title={'TimeSheet Detail'}
         />
-
+        <ScrollView showsVerticalScrollIndicator={false}>
         {item && (
           <TimeSheetItem
             time={
@@ -214,9 +191,10 @@ const DetailsSheetScreen = ({navigation, route}) => {
                 ? 'Week Starts at ' + getMonday(item.log_date)
                 : 'Day ' + new Date(item.log_date).toDateString()
             }
-            name={`${item.job_title} - ${time_sheet_details?.company_name}`}
+            name={`${item.job_title} `} //- ${time_sheet_details?.company_name}
+            submittedto={`${item?.candidate_name}`}  //- ${item.company_name}
             // submittedto={`Time Approver Manager - ${item?.approver_name}`}
-            contactname={`Contact Manager - ${time_sheet_details?.contact_name}`}
+            // contactname={`Contact Manager - ${time_sheet_details?.contact_name}`}
             status={item.module_status_name}
             status_style={item.status_colour_code}
             onPress={() => {}}
@@ -237,31 +215,53 @@ const DetailsSheetScreen = ({navigation, route}) => {
           <DrawLine marginTop={scale(5)} />
           <DrawLine marginTop={scale(1)} />
 
-          {time_sheet_details.approver_comments !== null &&
-            time_sheet_details.approver_comments !== '' && (
-              <CommentsBox
-                title={'Approver Comment'}
-                name={time_sheet_details.approver_comments}
-                comment={time_sheet_details.approver_comments}
-                // === ''
-                //   ? time_sheet_details.approver_comments
-                //   : null`
+          {/* {time_sheet_details.approver_comments !== null &&
+            time_sheet_details.approver_comments !== '' && ( */}
+{/*                
+              //   title={'Approver Comment'}
+              //   name={time_sheet_details.approver_comments}
+              //   comment={time_sheet_details.approver_comments}
+              //   // === ''
+              //   //   ? time_sheet_details.approver_comments
+              //   //   : null`
 
-                editable={true}
-              />
-              // <TextInput style={styles.title}>{time_sheet_details.approver_comments}</TextInput>
-            )}
-          {time_sheet_details.comments !== null &&
-            time_sheet_details.comments !== '' && (
-              <CommentsBox
-                title={'Submitter Comment'}
+              //   editable={true}
+              //  */}
+  {/* <TextInput style={styles.title}>{time_sheet_details.approver_comments}</TextInput> */}
+  {time_sheet_details.comments !== null && time_sheet_details.comments !== '' && (
+              <View>
+                <Text style={styles.comments}>Submitter comments:</Text>
+                <Text style={styles.title}>{time_sheet_details.comments}</Text>
+              </View>
+            )}  
+             {/* <DrawLine marginTop={scale(1)} />   */}
+  <View>
+                <Text style={styles.comments}>Approver Comments:</Text>
+
+                <TextInput style={styles.title}
+                value={com}
+                onChangeText={setCom}
+                // onChangeText={(text) => setCom(text)}
+                placeholder={''}
+                underlineColorAndroid={'transparent'}
+                autoCorrect={true} autoFocus={true}
+                // autoCapitalize={'sentences'}
+                />
+              </View>
+
+          {/* {time_sheet_details.comments !== null &&
+            time_sheet_details.comments !== '' && ( */}
+              {/* <CommentsBox
+                title ={'Submitter Comment'}
                 name={time_sheet_details.comments}
-                comment={time_sheet_details.comments}
-              />
-            )}
-          <TouchableOpacity
+                // comment={time_sheet_details.comments}
+                editable = {false}
+              /> */}
+            {/* )} */}
+          <Text style={styles.comments}>Attachment:</Text>
+          <TouchableOpacity 
             disabled={!time_sheet_details?.document_file}
-            style={{width: 50, height: 50}}
+            style={{width: 200, height: 50}}
             onPress={() => {
               if (
                 ext == 'png' ||
@@ -270,7 +270,7 @@ const DetailsSheetScreen = ({navigation, route}) => {
                 ext == 'jpeg' ||
                 ext == 'webp'
               ) {
-                navigation.navigate('ImageView', {
+                navigation.navigate('Preview', {
                   file:
                     'https://storage.googleapis.com/recruitbpm-document/' +
                     'production' +
@@ -320,9 +320,9 @@ const DetailsSheetScreen = ({navigation, route}) => {
                 style={{margin: 6}}
               />
             ) : ext == 'doc' ||
-            ext == 'docx' ||
-            ext == 'rtf' ||
-            ext == 'txt'  ? (
+              ext == 'docx' ||
+              ext == 'rtf' ||
+              ext == 'txt' ? (
               <AntDesign
                 name={'wordfile1'}
                 color={'blue'}
@@ -330,10 +330,10 @@ const DetailsSheetScreen = ({navigation, route}) => {
                 style={{margin: 6}}
               />
             ) : ext == 'png' ||
-            ext == 'jpg' ||
-            ext == 'gif' ||
-            ext == 'jpeg' ||
-            ext == 'webp'  ? (
+              ext == 'jpg' ||
+              ext == 'gif' ||
+              ext == 'jpeg' ||
+              ext == 'webp' ? (
               <Image
                 style={styles.imageStyle}
                 source={{
@@ -345,10 +345,12 @@ const DetailsSheetScreen = ({navigation, route}) => {
                 }}
               />
             ) : (
-              <Text>No File Found!</Text>
+              <Text>No attachment availabe!</Text>
             )}
           </TouchableOpacity>
-
+         
+          </View>
+          </ScrollView>
           {/* <CommentsBox
             title={'Receipt'}
             comment={
@@ -366,7 +368,7 @@ const DetailsSheetScreen = ({navigation, route}) => {
               uri: filename
             }}
           /> */}
-        </View>
+      
 
         <View style={styles.HiddenBtnView}>
           {item.module_status_name === 'Submitted' ? (
@@ -415,8 +417,13 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
+  comments:{
+    color: colors.black,
+    fontWeight:'bold',
+    fontSize : scale(13),
+  },
   Acceptbtn: {
-    paddingVertical: 5,
+    paddingVertical: 2,
     backgroundColor: 'green',
     flex: 1,
     borderRadius: 5,
@@ -428,7 +435,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   RejectBtn: {
-    paddingVertical: 5,
+    paddingVertical: 2,
     marginHorizontal: 24,
     flex: 1,
     backgroundColor: colors.delete_icon,
@@ -440,7 +447,8 @@ const styles = StyleSheet.create({
   },
 
   HiddenBtnView: {
-    marginTop: 24,
+     marginTop: 2,
+    marginBottom: 30,
     flexDirection: 'row',
     backgroundColor: '#fff',
     //  alignItems: 'flex-end',

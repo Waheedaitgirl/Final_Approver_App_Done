@@ -9,7 +9,9 @@ const TimeInput = ({item, index, editable, setHours}) => {
   const [error, isError] = useState(false);
   return (
     <View style={styles.mainview}>
-      <Text style={styles.label}>{item.date}</Text>
+      <Text style={styles.label}>
+        {moment(item.date).format('MMM-DD-YYYY')}
+      </Text>
 
       <TextInput
         keyboardType={'numeric'}

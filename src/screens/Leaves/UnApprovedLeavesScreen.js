@@ -179,7 +179,7 @@ const UnApprovedLeavesScreens = ({navigation, route}) => {
   const onStatusHandler = useCallback((leave_request_id, statusCode) => {
     Alert.alert(
       'Attention!',
-      `Are you sure want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
+      `Are you sure you want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
       [
         {
           text: 'Yes',

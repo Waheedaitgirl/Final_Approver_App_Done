@@ -44,10 +44,13 @@ const ImageViewScreen = ({ route }) => {
         },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Granted');
+        // return true;
         //     console.log('You can use the camera');
-      } else {
-        console.log('Storage permission denied');
-      }
+       } 
+      //  else {
+      //   console.log('Storage permission denied');
+      // }
     } catch (err) {
       console.warn(err);
     }
@@ -75,8 +78,10 @@ const ImageViewScreen = ({ route }) => {
 
       // Step 3: Check the HTTP response status
       if (response.info().status === 200) {
-        console.log(`File downloaded to: ${filePath}`);
-        Alert.alert('Congrats!Download Successfully')
+        // console.log(`File downloaded to: ${filePath}`);
+        Alert.alert
+        ('Congrats!',
+           'File downloaded Successfully')
         return filePath;
       } else {
         Alert.alert('Download failed. HTTP Status:', response.info().status)
@@ -196,8 +201,26 @@ const ImageViewScreen = ({ route }) => {
           onPress={() => {
             if (route?.params.file !== '') {
               // console.log('PATH URL', route?.params.file);
-              downloadImage();
-              // Alert.alert('file downloaded successfully');
+              // downloadImage();
+              
+              Alert.alert(
+                'Attention!',
+                'Do you want to download the file?',
+                [
+                  {
+text: 'No',
+                    onPress: () => {},
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Yes',
+                    onPress: () => {
+                      downloadImage();
+                      // downloadFile(url);
+                    },
+                  },
+                ],
+              );
             } else {
               Alert.alert('Please add file');
             }

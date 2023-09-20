@@ -158,13 +158,13 @@ const UnApprovedTimeSheetListScreen = ({navigation,route}) => {
       time={(item.time_sheet_view == 'Week') ? 'Week Starts at ' + getMonday(item.log_date) : 'Day ' + new Date(item.log_date).toDateString()}
       name={item.job_title}
       item={item}
-      submittedto={`${item?.candidate_name} - ${item.company_name}`}
+      submittedto={`${item?.candidate_name}`} // - ${item.company_name}
       status={item.module_status_name}
       status_style={item.status_colour_code}
       hours={`${item.hours} Hours`}
       onPress={() => navigation.navigate(MainRoutes.DetailsSheetScreen, {item,
-        onAccept: (id)=> AccpetTimeSheet(id),
-        OnRejected:(id)=>RejectTimeSheet(id)})}
+        onAccept: (id,comment)=> AccpetTimeSheet(id,comment),
+        OnRejected:(id,comment)=>RejectTimeSheet(id,comment)})}
       onEdit={() => navigation.navigate(MainRoutes.EditTimeSheetScreen, {item})}
       onDelete={() => getList()}
     />
@@ -175,7 +175,7 @@ const UnApprovedTimeSheetListScreen = ({navigation,route}) => {
   
     Alert.alert(
       'Attention!',
-      `Are you Sure want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
+      `Are you sure you want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
       [
         {
           text: 'No',
@@ -218,7 +218,7 @@ const UnApprovedTimeSheetListScreen = ({navigation,route}) => {
 
   const onRowDidOpen = rowKey => {};
 
-  const AccpetTimeSheet = id => {
+  const AccpetTimeSheet = (id,comment= '') => {
     let module_status_id = status
       .filter(
         obj =>
@@ -231,6 +231,7 @@ const UnApprovedTimeSheetListScreen = ({navigation,route}) => {
       '1',
       id,
       module_status_id,
+      comment
     )
       .then(response => {
         if (response.status) {
@@ -245,7 +246,7 @@ const UnApprovedTimeSheetListScreen = ({navigation,route}) => {
       });
   };
 
-  const RejectTimeSheet = id => {
+  const RejectTimeSheet = (id,comment = '') => {
     let module_status_id = status
       .filter(
         obj =>
@@ -258,6 +259,7 @@ const UnApprovedTimeSheetListScreen = ({navigation,route}) => {
       '1',
       id,
       module_status_id,
+      comment
     )
       .then(response => {
         if (response.status) {

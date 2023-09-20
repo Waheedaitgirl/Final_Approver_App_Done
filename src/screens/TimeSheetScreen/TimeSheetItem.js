@@ -12,7 +12,8 @@ import transform from 'css-to-react-native';
 import Hiring from '../../assets/images/Hiring.svg'
 import { RFValue } from "react-native-responsive-fontsize";
 FontAwesome.loadFont();
-const TimeSheetItem = memo(({name, time, submittedto, status,status_style, contactname}) => {
+const TimeSheetItem = memo(({name, time, candidate_name
+    ,submittedto, status,status_style, contactname}) => {
     let arr = (status_style.split(";"))
     const ss = transform([
                 [arr[0].split(":")[0].trim(),arr[0].split(":")[1].trim()],
@@ -45,7 +46,7 @@ const TimeSheetItem = memo(({name, time, submittedto, status,status_style, conta
                 </View>
                 <Text style={styles.textStyle}>{name?.toString()}</Text>
             </View>
-            {/* <View   
+            <View   
                 style={styles.btnView}>
                 <View style={{width:scale(20), height:scale(20)}} >
                     <FontAwesome 
@@ -55,19 +56,19 @@ const TimeSheetItem = memo(({name, time, submittedto, status,status_style, conta
                     />
                 </View>
                 <Text style={styles.textStyle}>{submittedto?.toString()}</Text>
-            </View> */}
-            <View   
-                style={styles.btnView}>
-                <View style={{width:scale(20), height:scale(20)}} >
-                <FontAwesome 
-                        name="users" 
+            </View>
+            
+            {/* <View style={styles.btnView}> */}
+                {/* <View style={{width:scale(20), height:scale(20)}} > */}
+                {/* <FontAwesome 
+                        name="user" 
                         color={colors.dark_primary_color} 
                         size={scale(18)} 
-                    />
+                    /> */}
                     {/* <Person width={scale(20)} height={scale(20)} /> */}
-                </View>
-                <Text style={styles.textStyle}>{contactname?.toString()}</Text>
-            </View>
+                {/* </View> */}
+                {/* <Text style={styles.textStyle}>{contactname?.toString()}</Text> */}
+            {/* </View> */}
             <View   
                 style={styles.btnView}>
                 <View style={{width:scale(20), height:scale(20)}} >

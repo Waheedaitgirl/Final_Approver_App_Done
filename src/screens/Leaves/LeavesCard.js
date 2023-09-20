@@ -9,10 +9,17 @@ import Entypo from 'react-native-vector-icons/Entypo'
 import moment from "moment"
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 const LeaveCard = memo(({item,onPress}) => {
+    console.log('[LEAVES ITEMS]', item)
       return(
         <View 
-          
-            style={styles.mainView}>
+           style={styles.mainView}>
+                 <View   
+                style={styles.btnView}>
+                <View style={{width:scale(20), height:scale(20)}} >
+                    <Entypo size={scale(20)} name={"calendar"} color={colors.dark_primary_color} />
+                </View>
+                <Text style={styles.textStyle}>{moment(item.requested_date).format("DD-MMM-YYYY hh:mm a")}</Text>
+            </View>
             <View   
                 style={styles.btnView}>
                 <View style={{width:scale(20), height:scale(20)}} >
@@ -27,27 +34,37 @@ const LeaveCard = memo(({item,onPress}) => {
                 </View>
                 <Text style={styles.textStyle}>{item.candidate_name}</Text>
             </View>
-            <View   
-                style={styles.btnView}>
-                <View style={{width:scale(20), height:scale(20)}} >
-                    <Entypo size={scale(20)} name={"calendar"} color={colors.dark_primary_color} />
-                </View>
-                <Text style={styles.textStyle}>{moment(item.requested_date).format("DD-MMM-YYYY HH:mm A")}</Text>
-            </View>
+           
             <View   
                 style={styles.btnView}>
                 <View style={{width:scale(20), height:scale(20)}} >
                 <Entypo size={scale(20)} name={"time-slot"} color={colors.dark_primary_color} />
                 </View>
-                <Text style={styles.textStyle}>{item?.requested_hours} Hours</Text>
+                <Text style={styles.textStyle}>{item?.requested_hours} Requested Hours</Text>
             </View>
-            <View   
+          <View   
+                style={styles.btnView}>
+                <View style={{width:scale(20), height:scale(20)}} >
+                <Entypo size={scale(20)} name={"time-slot"} color={colors.dark_primary_color} />
+                </View>
+                <Text style={styles.textStyle}>{item?.maximum_leaves} Total Hours </Text>
+            </View>
+            <View  
                 style={styles.btnView}>
                 <View style={{width:scale(20), height:scale(20)}} >
                     <Entypo size={scale(20)} name={"calendar"} color={colors.dark_primary_color} />
                 </View>
                 <Text style={styles.textStyle}>{moment(item.start_date).format("DD-MMM-YYYY")} - {moment(item.end_date).format("DD-MMM-YYYY")}</Text>
             </View>
+            <View   
+                style={styles.btnView}>
+                <View style={{width:scale(20), height:scale(20)}} >
+                 <MaterialIcons  size={scale(20)} name={"policy"} color={colors.dark_primary_color} />
+                </View>
+                {item?.is_paid ?<Text style={styles.textStyle}>Paid</Text> : <Text style={styles.textStyle}> Unpaid </Text>} 
+                  
+            </View>
+           
             <View   
                 style={styles.btnView}>
                 <View style={{width:scale(20), height:scale(20)}} >

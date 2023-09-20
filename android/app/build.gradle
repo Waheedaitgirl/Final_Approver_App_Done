@@ -138,7 +138,7 @@ android {
                         // on below line we are setting a
                         // name to our apk as GFG.apk
                     output->
-                        def name = "Launch-Approver-app-release.apk"
+                        def name = "Launch-1-Approver-app-release.apk"
                         // on below line we are setting the
                         // outputFile Name to our apk file.
                         output.outputFileName = name

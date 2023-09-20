@@ -1,9 +1,17 @@
-import React, { useEffect, useState,useCallback } from 'react';
-import {StyleSheet,SafeAreaView,View,Image,  Alert,
-  ActivityIndicator,Pressable, Text} from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { commonStyles,textStyles } from '../../styles';
-import TimeSheetFlatListItem from './TimeSheetFlatListItem'
+import React, {useEffect, useState, useCallback} from 'react';
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  Image,
+  Alert,
+  ActivityIndicator,
+  Pressable,
+  Text,
+} from 'react-native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {commonStyles, textStyles} from '../../styles';
+import TimeSheetFlatListItem from './TimeSheetFlatListItem';
 import CustomHeader from '../../components/SearchHeader';
 import {MainRoutes} from '../../constants/routes';
 import {colors} from '../../constants/theme';
@@ -46,10 +54,7 @@ const TimeSheetListScreen = ({navigation}) => {
   const onFilterList = type => {
     switch (type) {
       case 'All':
-     
-        setFilterData(
-          data
-        );
+        setFilterData(data);
         break;
       case 'Approved':
         // setData(
@@ -84,51 +89,52 @@ const TimeSheetListScreen = ({navigation}) => {
         return;
     }
   };
-  
+
   const FilterByTitle = title => {
     let lowerTitle = title.toLowerCase();
-     let draft_data = data?.filter(item => {
-    // console.log('item?.created_date',
-    // moment(item?.created_date).format("DD-MMM-YYYY").toLowerCase())
-    return (
-        item?.job_title?.toLowerCase()?.includes(lowerTitle)
-      ||item?.candidate_id?.toLowerCase()?.includes(lowerTitle)
-       || item?.module_status_id?.toLowerCase()?.includes(lowerTitle) ||
-      item?.candidate_name?.toLowerCase()?.includes(lowerTitle)
-      || item?.time_sheet_view?.toLowerCase()?.includes(lowerTitle)
-      // || item?.time_sheet_id?.toLowerCase()?.includes(lowerTitle)
-      || item?.module_status_name?.toLowerCase()?.includes(lowerTitle)
-      || ((item.time_sheet_view == 'Week') ? 'Week Starts at ' + getMonday(item.log_date) : 'Day ' + new Date(item.log_date).toDateString())?.toLowerCase()?.includes(lowerTitle)
-      // || item?.log_date?.toLowerCase()?.includes(lowerTitle)
-      || item?.hours?.toLowerCase()?.includes(lowerTitle)
-      || item?.company_name?.toLowerCase()?.includes(lowerTitle)
-      // || item?.time_sheet_id?.toLowerCase()?.includes(lowerTitle)
-    );
-  });
-  
+    let draft_data = data?.filter(item => {
+      // console.log('item?.created_date',
+      // moment(item?.created_date).format("DD-MMM-YYYY").toLowerCase())
+      return (
+        item?.job_title?.toLowerCase()?.includes(lowerTitle) ||
+        item?.candidate_id?.toLowerCase()?.includes(lowerTitle) ||
+        item?.module_status_id?.toLowerCase()?.includes(lowerTitle) ||
+        item?.candidate_name?.toLowerCase()?.includes(lowerTitle) ||
+        item?.time_sheet_view?.toLowerCase()?.includes(lowerTitle) ||
+        // || item?.time_sheet_id?.toLowerCase()?.includes(lowerTitle)
+        item?.module_status_name?.toLowerCase()?.includes(lowerTitle) ||
+        (item.time_sheet_view == 'Week'
+          ? 'Week Starts at ' + getMonday(item.log_date)
+          : 'Day ' + new Date(item.log_date).toDateString()
+        )
+          ?.toLowerCase()
+          ?.includes(lowerTitle) ||
+        // || item?.log_date?.toLowerCase()?.includes(lowerTitle)
+        item?.hours?.toLowerCase()?.includes(lowerTitle) ||
+        item?.company_name?.toLowerCase()?.includes(lowerTitle)
+        // || item?.time_sheet_id?.toLowerCase()?.includes(lowerTitle)
+      );
+    });
+
     setFilterData(draft_data);
-console.log('[CheckDataList]',draft_data);
- 
+    console.log('[CheckDataList]', draft_data);
   };
   const getList = () => {
     setLoading(true);
     getTimeSheetExpensesListByApprooverID(
       user.id,
-       '1',
-        user.account_id,
-        local_status,
-      )
+      '1',
+      user.account_id,
+      local_status,
+    )
       .then(response => {
+        console.log('{Response}', response);
         if (response.status == 200) {
+         
+          let organizeData = response?.data?.data?.sort((a,b) => {
+            return new Date(b.log_date) - new Date(a.log_date);
+          });
           console.log('Heedi', response.data.data);
-          let organizeData = response?.data?.data?.sort(
-            (a, b) => {
-
-              return new Date(b.log_date
-                ) - new Date(a.log_date
-                  )
-            }
-          );
           setData(organizeData);
           setFilterData(organizeData);
           setLoading(false);
@@ -149,70 +155,72 @@ console.log('[CheckDataList]',draft_data);
       });
   };
 
-  let getMonday = (d) => {
+  let getMonday = d => {
     d = new Date(d);
     var day = d.getDay(),
-        diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+      diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
     return new Date(d.setDate(diff)).toDateString();
-  }
- 
+  };
+
   const renderItem = ({item}) => (
     <TimeSheetFlatListItem
-      time={(item.time_sheet_view == 'Week') ? 'Week Starts at ' + getMonday(item.log_date) : 'Day ' + new Date(item.log_date).toDateString()}
+      time={
+        item.time_sheet_view == 'Week'
+          ? 'Week Starts at ' + getMonday(item.log_date)
+          : 'Day ' + new Date(item.log_date).toDateString()
+      }
       name={item.job_title}
       item={item}
-      submittedto={`${item?.candidate_name} - ${item.company_name}`}
+      submittedto={`${item?.candidate_name}`}  //  - ${item.company_name}
       status={item.module_status_name}
       status_style={item.status_colour_code}
       hours={`${item.hours} Hours`}
-      onPress={() => navigation.navigate(MainRoutes.DetailsSheetScreen, {item, 
-        onAccept: (id)=> AccpetTimeSheet(id),
-        OnRejected:(id)=>RejectTimeSheet(id)})}
+      onPress={() =>
+        navigation.navigate(MainRoutes.DetailsSheetScreen, {
+          item,
+          onAccept: (id,comment) => AccpetTimeSheet(id,comment),
+          OnRejected: (id,comment) => RejectTimeSheet(id,comment),
+        })
+      }
       onEdit={() => navigation.navigate(MainRoutes.EditTimeSheetScreen, {item})}
       onDelete={() => getList()}
     />
   );
 
   const onStatusHandler = useCallback((time_sheet_id, statusCode) => {
-
-  
     Alert.alert(
       'Attention!',
-      `Are you Sure want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
+      `Are you sure you want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
       [
         {
           text: 'No',
-          onPress: () => {
-            
-          },
+          onPress: () => {},
         },
         {
           text: 'Yes',
-          onPress: () => {statusCode === 1
-            ?AccpetTimeSheet(time_sheet_id)
-            :RejectTimeSheet(time_sheet_id)
-             
-           ;},
+          onPress: () => {
+            statusCode === 1
+              ? AccpetTimeSheet(time_sheet_id)
+              : RejectTimeSheet(time_sheet_id);
+          },
           style: 'cancel',
         },
-       
       ],
     );
   }, []);
 
   const renderHiddenItem = (data, rowMap) => {
-
-      return(
-        <View style={styles.HiddenBtnView}>
+    return (
+      <View style={styles.HiddenBtnView}>
         {data?.item.module_status_name === 'Submitted' ? (
           <>
-             <Pressable
+            <Pressable
               style={styles.Acceptbtn}
               onPress={() => onStatusHandler(data.item.time_sheet_id, 1)}>
               <Ionicons name="checkmark" color={'#fff'} size={scale(22)} />
               <Text style={{...textStyles.Label, color: '#fff'}}>Approve</Text>
             </Pressable>
-            <View style={{height:1}}/>
+            <View style={{height: 1}} />
             <Pressable
               style={styles.RejectBtn}
               onPress={() => onStatusHandler(data.item.time_sheet_id, 0)}>
@@ -236,51 +244,57 @@ console.log('[CheckDataList]',draft_data);
           </Pressable>
         )}
       </View>
-    //       <View style ={styles.HiddenBtnView} >
-    //          {data?.item.module_status_name == "Submitted" ?(
-    //     <>
-    //           <Pressable
-    //               style={styles.Acceptbtn}
-    //               onPress={() => AccpetTimeSheet(data.item.time_sheet_id)} >
-    //               <Ionicons name="checkmark" color={"#fff"} size={scale(22)} />
-    //                   <Text style={{...textStyles.Label, color:"#fff"}}>
-    //                       Approve
-    //                   </Text>
-    //               </Pressable>
-    //           <Pressable
-    //               style={styles.RejectBtn}
-    //               onPress={() => RejectTimeSheet(data.item.time_sheet_id)} >
-    //               <MaterialIcons name="cancel" color={'#fff'} size={scale(22)} />
-    //               <Text style={{...textStyles.Label, color:"#fff"}}>
-    //                   Reject
-    //               </Text>
-    //           </Pressable>
-    //           </>
-    //  ): null }
-    //       </View>
-      )
-
-  }
+      //       <View style ={styles.HiddenBtnView} >
+      //          {data?.item.module_status_name == "Submitted" ?(
+      //     <>
+      //           <Pressable
+      //               style={styles.Acceptbtn}
+      //               onPress={() => AccpetTimeSheet(data.item.time_sheet_id)} >
+      //               <Ionicons name="checkmark" color={"#fff"} size={scale(22)} />
+      //                   <Text style={{...textStyles.Label, color:"#fff"}}>
+      //                       Approve
+      //                   </Text>
+      //               </Pressable>
+      //           <Pressable
+      //               style={styles.RejectBtn}
+      //               onPress={() => RejectTimeSheet(data.item.time_sheet_id)} >
+      //               <MaterialIcons name="cancel" color={'#fff'} size={scale(22)} />
+      //               <Text style={{...textStyles.Label, color:"#fff"}}>
+      //                   Reject
+      //               </Text>
+      //           </Pressable>
+      //           </>
+      //  ): null }
+      //       </View>
+    );
+  };
   const onRowDidOpen = rowKey => {
     console.log('This row opened', rowKey);
   };
 
-  const AccpetTimeSheet = id => {
+  const AccpetTimeSheet = (id,comment='') => {
+
+  
+    
     let module_status_id = status
       .filter(
         obj =>
           obj.module_id === MODULE_ID && obj.module_status_name === 'Approved',
       )
       .map(o => o.module_status_id)[0];
+      console.log(module_status_id);
     AcceptOrRejectTimeSheetOrExpenses(
       user.account_id,
       user.id,
       '1',
       id,
       module_status_id,
+      comment
     )
       .then(response => {
+       console.log(response)
         if (response.status) {
+          console.log('[Approved]', response.status)
           getList();
           alert('TimeSheet request accepted successfully');
         } else {
@@ -288,11 +302,12 @@ console.log('[CheckDataList]',draft_data);
         }
       })
       .catch(err => {
+        console.log('[Error]',err);
         alert(err.message);
       });
   };
 
-  const RejectTimeSheet = id => {
+  const RejectTimeSheet = (id,comment='') => {
     let module_status_id = status
       .filter(
         obj =>
@@ -305,8 +320,10 @@ console.log('[CheckDataList]',draft_data);
       '1',
       id,
       module_status_id,
+      comment
     )
       .then(response => {
+        console.log(response);
         if (response.status) {
           getList();
           alert('TimeSheet request rejected successfully');
@@ -372,8 +389,6 @@ console.log('[CheckDataList]',draft_data);
           previewOpenDelay={3000}
           onRowDidOpen={onRowDidOpen}
           ListEmptyComponent={() => {
-
-           
             return (
               <View
                 style={{
@@ -395,15 +410,14 @@ console.log('[CheckDataList]',draft_data);
                 ) : (
                   <>
                     <Image
-                    source={require('../../assets/images/norecord.gif')}
-                    style={{
-                      width: verticalScale(150),
-                      height: verticalScale(150),
-                      resizeMode: 'contain',
-                    }}
+                      source={require('../../assets/images/norecord.gif')}
+                      style={{
+                        width: verticalScale(150),
+                        height: verticalScale(150),
+                        resizeMode: 'contain',
+                      }}
                     />
-                   
-                    </>
+                  </>
                 )}
               </View>
             );

@@ -29,7 +29,8 @@ export const downloadFile = async url => {
     // Step 3: Check the HTTP response status
     if (response.info().status === 200) {
       console.log(`File downloaded to: ${filePath}`);
-      Alert.alert('Congrats!Download Successfully');
+      Alert.alert('Congrats!',
+      ' File downloaded Successfully');
       return filePath;
     } else {
       Alert.alert('Download failed. HTTP Status:', response.info().status);

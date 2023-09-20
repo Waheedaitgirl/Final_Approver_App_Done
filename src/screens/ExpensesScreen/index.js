@@ -19,8 +19,8 @@ import {useSelector} from 'react-redux';
 import Spacer from '../../components/Spacer';
 
 import {
-  AcceptOrRejectTimeSheetOrExpenses,
   getTimeSheetExpensesListByApprooverID,
+  AcceptOrRejectTimeSheetOrExpenses,
 } from '../../api';
 import CustomStatusBar from '../../components/StatusBar';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -29,7 +29,6 @@ import {SwipeListView} from 'react-native-swipe-list-view';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 const MODULE_ID = '54';
-
 // console.log({MODULE_ID});
 const AllExpenseScreen = ({navigation}) => {
   const {user} = useSelector(state => state.LoginReducer);
@@ -51,16 +50,14 @@ const AllExpenseScreen = ({navigation}) => {
   const [filterData, setFilterData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
- 
+
   const [error_message, setErrorMessage] = useState('');
   useEffect(() => {
     getExpensesList();
-
     return () => {
       setFilterData(data);
     };
   }, []);
-
   const onFilterList = type => {
     // alert(type)
     switch (type) {
@@ -105,7 +102,6 @@ const AllExpenseScreen = ({navigation}) => {
     //  let item = data[0].job_title?.toLowerCase();
     // console.log('title',title,item);
     let lowerTitle = title.toLowerCase();
-
     let draft_data = data?.filter(item => {
       console.log('FATIGUE', item);
       // moment(item?.created_date).format("DD-MMM-YYYY").toLowerCase())
@@ -113,10 +109,10 @@ const AllExpenseScreen = ({navigation}) => {
         item?.job_title?.toLowerCase()?.includes(lowerTitle) ||
         item?.candidate_name?.toLowerCase()?.includes(lowerTitle) ||
         moment(item.created_date)
-          .format('DD-MMM-YYYY')
+          .format('MMM-DD-YYYY')
           ?.toLowerCase()
           ?.includes(lowerTitle) ||
-         item?.expense_report_title?.toLowerCase()?.includes(lowerTitle) ||
+        item?.expense_report_title?.toLowerCase()?.includes(lowerTitle) ||
         item?.module_status_name?.toLowerCase()?.includes(lowerTitle) ||
         parseFloat(item.total_amount)
           .toFixed(2)
@@ -131,19 +127,19 @@ const AllExpenseScreen = ({navigation}) => {
     //  console.log(draft_data);
     setFilterData(draft_data);
   };
-
   getExpensesList = () => {
     setLoading(true);
-    console.log('[Testing]', user?.id, '2', user?.account_id);
+    // console.log('[Testing]', user?.id, '2', user?.account_id);
     getTimeSheetExpensesListByApprooverID(
       user?.id,
       '2',
       user?.account_id,
       local_status,
+    
     )
       .then(response => {
         if (response.status == 200) {
-          console.log('WAHEEDA', response.data.data);
+          // console.log('WAHEEDA', response.data.data);
           let organizeData = response?.data?.data?.sort((a, b) => {
             return new Date(b.created_date) - new Date(a.created_date);
           });
@@ -175,14 +171,15 @@ const AllExpenseScreen = ({navigation}) => {
       billtype={item.expense_report_title}
       type={item.type === 'employee' ? item.candidate_name : item.username}
       status={item.module_status_name}
-      date={moment(item.created_date).format('DD-MMM-YYYY')}
+      date={moment(item.created_date).format('MMM-DD-YYYY')}
       job={item.job_title}
       status_colour_code={item.status_colour_code}
       price={`$ ${parseFloat(item.total_amount).toFixed(2)}`}
-      List={() => {navigation.navigate(MainRoutes.ExpenseDetailsScreen, {
+      List={() => {
+        navigation.navigate(MainRoutes.ExpenseDetailsScreen, {
           item,
-          onAccept: id => AccpetExpense(id),
-          OnRejected: id => RejectExpense(id),
+          onAccept: (id, comment) => AccpetExpense(id,comment),
+          OnRejected: (id, comment) => RejectExpense(id,comment),
         });
       }}
     />
@@ -191,7 +188,7 @@ const AllExpenseScreen = ({navigation}) => {
   const onStatusHandler = useCallback((expense_id, statusCode) => {
     Alert.alert(
       'Attention!',
-      `Are you sure want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
+      `Are you sure you want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
       [
         {
           text: 'No',
@@ -249,8 +246,8 @@ const AllExpenseScreen = ({navigation}) => {
     );
   };
 
-  const AccpetExpense = id => {
-    // console.log('[expense_id]', id);
+  const AccpetExpense = (id, comment = '') => {
+   
     setAcceptLoading(true);
 
     let module_status_id = status
@@ -266,18 +263,19 @@ const AllExpenseScreen = ({navigation}) => {
     //   id: id,
     // });
     //  return;
-
+    // console.log(module_status_id);
     AcceptOrRejectTimeSheetOrExpenses(
       user.account_id,
       user.id,
       '2',
       id,
-      module_status_id,
+      module_status_id[0],
+      comment,
     )
       .then(response => {
         setAcceptLoading(false);
         if (response.status === 200) {
-          // console.log(response);
+          console.log('[approved]', response);
           getExpensesList();
           alert('Expense request accepted successfully');
         } else {
@@ -285,12 +283,13 @@ const AllExpenseScreen = ({navigation}) => {
         }
       })
       .catch(err => {
+        console.log('[Error]', err);
         setAcceptLoading(false);
         alert(err.message);
       });
   };
 
-  const RejectExpense = id => {
+  const RejectExpense = (id, comment = '') => {
     setRejectLoading(true);
     let module_status_id = status
       .filter(
@@ -303,12 +302,13 @@ const AllExpenseScreen = ({navigation}) => {
       user.id,
       '2',
       id,
-      module_status_id,
+      module_status_id[0],
+      comment,
     )
       .then(response => {
         setRejectLoading(false);
         if (response.status === 200) {
-          //console.log(response);
+          console.log(response);
           getExpensesList();
           alert('Expense request rejected successfully');
         } else {
@@ -367,7 +367,6 @@ const AllExpenseScreen = ({navigation}) => {
         />
 
         <SwipeListView
-       
           showsVerticalScrollIndicator={false}
           data={filterData}
           renderItem={renderItem}
@@ -403,14 +402,16 @@ const AllExpenseScreen = ({navigation}) => {
                     }}
                   />
                 ) : (
-                  <Image
-                    source={require('../../assets/images/norecord.gif')}
-                    style={{
-                      width: verticalScale(150),
-                      height: verticalScale(150),
-                      resizeMode: 'contain',
-                    }}
-                  />
+                  <>
+                    <Image
+                      source={require('../../assets/images/norecord.gif')}
+                      style={{
+                        width: verticalScale(150),
+                        height: verticalScale(150),
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </>
                 )}
               </View>
             );

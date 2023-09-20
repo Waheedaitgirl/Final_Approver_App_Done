@@ -18,7 +18,7 @@ import { RFValue } from "react-native-responsive-fontsize";
  FontAwesome.loadFont();
 const ExpansesItem = memo(({item, billtype, type, status,date,List, job,status_colour_code, price,user_id}) => {
     let arr = (status_colour_code.split(";"))
-    const [isVisible ,setIsVisible] = useState(false)
+    // const [isVisible ,setIsVisible] = useState(false)
     const ss = transform([
                 [arr[0].split(":")[0].trim(),arr[0].split(":")[1].trim()],
                 [arr[1].split(":")[0].trim(),arr[1].split(":")[1].trim()],
@@ -27,7 +27,7 @@ const ExpansesItem = memo(({item, billtype, type, status,date,List, job,status_c
         
     return(
         <TouchableOpacity 
-            // activeOpacity={1}
+            activeOpacity={1}
             onPress={List}
             style={styles.mainView}>
             <View   

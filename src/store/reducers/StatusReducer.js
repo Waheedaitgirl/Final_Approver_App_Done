@@ -1,6 +1,7 @@
 import { GET_STATUS} from '../types';
 const initialState = {
-    status:[]
+    status:[],
+   // comments : '',
 };
 const StatusReducer = (state = initialState, action) => {
   

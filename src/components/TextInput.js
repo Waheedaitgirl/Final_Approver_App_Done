@@ -47,6 +47,7 @@ const CustomTextInput = ({
             <TextInput
                 secureTextEntry={eyeon}
                 placeholder={placeholder}
+                // placeholder = {comments}
                 placeholderTextColor={colors.divide_color}
                 value={value}
                 autoCapitalize={"none"}

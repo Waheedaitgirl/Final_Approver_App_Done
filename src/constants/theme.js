@@ -34,5 +34,6 @@ export const colors = {
     error_text:"rgba(255, 0, 0,1)",
     white:"#fff",
     delete_icon:"#C00",
-    success_icon:"#067000"
+    success_icon:"#067000",
+    black: '#000000'
 }

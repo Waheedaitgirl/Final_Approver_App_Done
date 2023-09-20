@@ -41,9 +41,10 @@ export function getExpensesDetails(account_id,expense_id){
 }
 
 
-export function AcceptOrRejectTimeSheetOrExpenses(account_id,approver_id,approver_type,expense_id, modules_status_id ){
+export function AcceptOrRejectTimeSheetOrExpenses(account_id,approver_id,approver_type,expense_id, modules_status_id, comments ){
+    console.log('[comment]',comments);
     return request({
-        url:`approver?account_id=${account_id}&status=approve_reject&approver_id=${approver_id}&approver_type=${approver_type}&expense_id=${expense_id}&modules_status_id=${modules_status_id}`,
+        url:`approver?account_id=${account_id}&status=approve_reject&approver_id=${approver_id}&approver_type=${approver_type}&expense_id=${expense_id}&modules_status_id=${modules_status_id}&comments=${comments}`,
         method:"get"
     })
 }

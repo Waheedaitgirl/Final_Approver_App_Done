@@ -6,6 +6,7 @@ import { colors, fonts } from "../../constants/theme";
 import { textStyles } from "../../styles/textStyles";
 import TimeInput from "./TimeInput";
 const WeeklySummary = ({logs,editable, time_types}) => {
+    console.log('[weekly-summary]' , logs);
   
     return(
         <View style={styles.mainview}>

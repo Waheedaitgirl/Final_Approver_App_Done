@@ -322,7 +322,7 @@ const VerifyCodeScreen = ({navigation}) => {
           onPress={() => OtpRequest()}
           // onPress={() => navigation.navigate(AuthRoutes.ResetPasswordScreen)}
         >
-          {loading ? <ActivityIndicator /> :  <Text style={styles.btnText}> Submit Code</Text>}
+          {loading ? <ActivityIndicator color = '#fff'/> :  <Text style={styles.btnText}> Submit Code</Text>}
          
         </TouchableOpacity>
 

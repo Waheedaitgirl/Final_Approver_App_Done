@@ -12,10 +12,10 @@ import DrawLine from '../../components/DrawLine';
 import {AppScreenWidth} from '../../constants/sacling';
 import {fonts} from '../../constants/theme';
 import {textStyles} from '../../styles/textStyles';
-const CommentsBox = ({title, comment, editable = true,}) => {
+const CommentsBox = ({title, comments, editable = true,}) => {
   console.log("Edit Cooments",editable);
-  const [text, setText] = useState(comment || '');
-  console.log([],comment);
+  const [text, setText] = useState(comments|| '');
+  console.log([],comments);
   return (
     <View
       style={{

@@ -44,10 +44,13 @@ const Item = ({
   amount,
   filename,
   expense_receipt,
-  approver_comments,
+  approver_comments='',
   expense_comments,
   Linking,
+  com,setCom
 }) => {
+
+ 
   const getFileExtention = fileUrl => {
     // To get the file extension
     return /[.]/.exec(fileUrl) ? /[^.]+$/.exec(fileUrl) : undefined;
@@ -55,6 +58,7 @@ const Item = ({
   const navigation = useNavigation();
   const [ext, setExt] = useState(null);
   useEffect(() => {
+    setCom(approver_comments)
     setExt(getFileExtention(filename));
   }, []);
   return (
@@ -85,8 +89,7 @@ const Item = ({
         <View style={styles.row}>
           <View>
             <Text style={styles.buleText}>Amount:</Text>
-            <Text includeFontPadding={false} style={styles.ButtonText}>
-              ${amount}
+            <Text includeFontPadding={false} style={styles.title}>${amount}
             </Text>
           </View>
           <View>
@@ -95,7 +98,7 @@ const Item = ({
 
             <TouchableOpacity
               disabled={!filename}
-              style={{width: 50, height: 50}}
+              style={styles.title}
               onPress={() => {
                 if (
                   ext == 'png' ||
@@ -105,7 +108,7 @@ const Item = ({
                   ext == 'webp'
                 ) {
                   console.log('filename', filename);
-                  navigation.navigate('ImageView', {
+                  navigation.navigate('Preview', {
                     file: filename,
                   });
                 } else {
@@ -171,7 +174,7 @@ const Item = ({
                   style={{margin: 6}}
                 />
               ) : (
-                <Text>No File Found!</Text>
+                <Text>No receipt available!</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -180,17 +183,23 @@ const Item = ({
           <View style={styles.row}>
             {expense_comments !== null && expense_comments !== '' && (
               <View>
-                <Text style={styles.buleText}>Expense Comment:</Text>
+                <Text style={styles.buleText}>Comments:</Text>
                 <Text style={styles.title}>{expense_comments}</Text>
               </View>
             )}
-            {approver_comments !== null && approver_comments !== '' && (
+            {/* {approver_comments !== null && approver_comments !== '' && ( */}
               <View>
-                <Text style={styles.buleText}>Approver Comment:</Text>
+                <Text style={styles.buleText}>Approver Comments:</Text>
 
-                <TextInput style={styles.title}>{approver_comments}</TextInput>
+                <TextInput style={styles.title}
+                value={com}
+                onChangeText={setCom}
+                placeholder={''}
+                underlineColorAndroid={'transparent'}
+                autoCorrect={true} autoFocus={true}
+                />
               </View>
-            )}
+            {/* )} */}
           </View>
         </View>
       </View>
@@ -206,9 +215,9 @@ const Item = ({
   );
 };
 
-const ExpenseDetailsScreen = ({navigation, route, fileUrl, fileName}) => {
-  // const fileExtension = fileName?.split('.')?.pop();
+const ExpenseDetailsScreen = ({navigation, route,}) => {
   const [logs, setLogs] = useState([]);
+  const [com,setCom] = useState('')
   const {user} = useSelector(state => state.LoginReducer);
   const [isModalVisible, setModalVisible] = useState(false);
   const [error, setError] = useState(false);
@@ -216,12 +225,12 @@ const ExpenseDetailsScreen = ({navigation, route, fileUrl, fileName}) => {
   const [data, setData] = useState([]);
   let item = route.params.item;
   const status = item.module_status_name;
-  //  console.log('item',item);
+  
   useEffect(() => {
     getExpensesDetails(user.account_id, item.expense_id)
       .then(response => {
         if (response.status === 200) {
-          // console.log(response.data.logs);
+           console.log(response.data.logs);
           setLoading(false);
           setLogs(response.data.logs);
         } else {
@@ -237,9 +246,10 @@ const ExpenseDetailsScreen = ({navigation, route, fileUrl, fileName}) => {
   }, []);
 
   const onStatusHandler = useCallback((expense_id, statusCode) => {
+
     Alert.alert(
       'Attention!',
-      `Are you Sure want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
+      `Are you sure you want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
       [
         {
           text: 'No',
@@ -249,8 +259,8 @@ const ExpenseDetailsScreen = ({navigation, route, fileUrl, fileName}) => {
           text: 'Yes',
           onPress: () => {
             statusCode === 1
-              ? route.params?.onAccept(expense_id)
-              : route.params?.OnRejected(expense_id);
+              ? route.params?.onAccept(expense_id,com)
+              : route.params?.OnRejected(expense_id,com);
 
             navigation?.goBack();
           },
@@ -258,24 +268,22 @@ const ExpenseDetailsScreen = ({navigation, route, fileUrl, fileName}) => {
         },
       ],
     );
-  }, []);
+  }, [com]);
 
   if (loading) {
     return (
       <SafeAreaProvider>
-        <CustomStatusBar />
-
-        {/* <SafeAreaView style={commonStyles.container}></SafeAreaView> */}
-        <CustomHeader
+        {/* <CustomStatusBar /> */}
+       {/* <SafeAreaView style = {commonStyles.container}> */}
+        {/* <CustomHeader
           show_backButton={true}
           isdrawer={false}
           onPress={() => navigation.goBack()}
-          title={'Expenses Details'}
-        />
-        {/* <View style={commonStyles.container}> */}
-
+          title={'Expenses Detail'}
+        /> */}
         <Spacer height={AppScreenWidth} />
         <ActivityIndicator size={'large'} color={colors.dark_primary_color} />
+        {/* </SafeAreaView> */}
       </SafeAreaProvider>
     );
   }
@@ -283,7 +291,7 @@ const ExpenseDetailsScreen = ({navigation, route, fileUrl, fileName}) => {
     return (
       <SafeAreaProvider>
         <CustomStatusBar />
-        <View style={commonStyles.container}>
+        <SafeAreaView style={commonStyles.container}>
           <CustomHeader
             show_backButton={true}
             isdrawer={false}
@@ -298,8 +306,8 @@ const ExpenseDetailsScreen = ({navigation, route, fileUrl, fileName}) => {
               height: verticalScale(150),
               resizeMode: 'contain',
             }}
-          />{' '}
-        </View>
+          />
+        </SafeAreaView>
       </SafeAreaProvider>
     );
   }
@@ -316,13 +324,13 @@ const ExpenseDetailsScreen = ({navigation, route, fileUrl, fileName}) => {
         <ScrollView showsVerticalScrollIndicator={false}>
           {item && (
             <ExpansesItem
-              // item={item}
+              item={item}
               billtype={item.expense_report_title}
               type={
                 item.type === 'employee' ? item.candidate_name : item.username
               }
               status={item.module_status_name}
-              date={moment(item.created_date).format('DD-MMM-YYYY')}
+              date={moment(item.created_date).format('MMM-DD-YYYY')}
               job={item.job_title}
               status_colour_code={item.status_colour_code}
               price={`$ ${parseFloat(item.total_amount).toFixed(2)}`}
@@ -334,18 +342,19 @@ const ExpenseDetailsScreen = ({navigation, route, fileUrl, fileName}) => {
             />
           )}
           {logs.map((item, index) => {
-            console.log('item->>', item);
-
+ 
             return (
-              <View key={`${index}`}>
+              <View key={`${index}`}> 
                 <Item
-                  date={item.expense_date}
+                  date={moment(item.expense_date).format('MMM-DD-YYYY')}
                   expense_type={item.expense_type_name}
                   bill_type={item.expense_bill_type_name}
                   category={item.category_name}
                   amount={item.expense_amount}
                   approver_comments={item.approver_comments}
                   expense_comments={item.expense_comments}
+                  com={com}
+                  setCom={setCom}
                   filename={
                     item.expense_receipt != null
                       ? 'https://storage.googleapis.com/recruitbpm-document/' +
@@ -424,6 +433,9 @@ const styles = StyleSheet.create({
 
     elevation: 8,
   },
+  // comments :{
+  //   fontSize: scale(12),
+  // },
   buleText: {
     ...textStyles.smallheading,
     fontSize: scale(10),
@@ -450,7 +462,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
   Acceptbtn: {
-    paddingVertical: 5,
+    paddingVertical: 2,
     backgroundColor: 'green',
     flex: 1,
     borderRadius: 5,
@@ -462,7 +474,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   RejectBtn: {
-    paddingVertical: 5,
+    paddingVertical: 2,
     marginHorizontal: 24,
     flex: 1,
     backgroundColor: colors.delete_icon,
@@ -474,8 +486,8 @@ const styles = StyleSheet.create({
   },
 
   HiddenBtnView: {
-    // marginTop: 24,
-    marginBottom: 40,
+    marginTop: 2,
+    marginBottom: 30,
     flexDirection: 'row',
     backgroundColor: '#fff',
     //  alignItems: 'flex-end',
