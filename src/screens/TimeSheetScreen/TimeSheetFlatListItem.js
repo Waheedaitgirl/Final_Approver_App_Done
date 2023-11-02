@@ -53,7 +53,7 @@ const TimeSheetFlatListItem = memo(({name,item, time, submittedto,status_style, 
                         size={scale(18)} 
                     />
                 </View>
-                <Text style={styles.textStyle}>{submittedto}</Text>
+                <Text style={styles.textStyle}>{submittedto.replaceAll('&amp;','&')}</Text>
             </View>
             <View   
                 style={styles.btnView}>

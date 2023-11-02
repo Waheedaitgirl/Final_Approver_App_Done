@@ -61,7 +61,7 @@ const ExpansesItem = memo(({item, billtype, type, status,date,List, job,status_c
                         size={scale(18)} 
                     />
                 </View>
-                <Text style={styles.textStyle}>{type}</Text>
+                <Text style={styles.textStyle}>{type.replaceAll('&amp;','&')}</Text>
             </View>
             
            

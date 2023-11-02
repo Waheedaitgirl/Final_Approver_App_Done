@@ -85,13 +85,13 @@ const UnApprovedLeavesScreens = ({navigation, route}) => {
         item?.module_id?.toLowerCase()?.includes(lowerTitle) ||
         item?.requested_by?.toLowerCase()?.includes(lowerTitle) ||
         moment(item?.requested_date)
-          .format('DD-MMM-YYYY HH:mm A')
+          .format('DD-MMM-YYYY hh:mm a')
           .toLowerCase()
           ?.includes(lowerTitle) ||
         item?.requested_hours?.toLowerCase()?.includes(lowerTitle) ||
-        `${moment(item?.start_date).format('DD-MMM-YYYY')} - ${moment(
+        `${moment(item?.start_date).format('DD-MM-YYYY')} - ${moment(
           item?.end_date,
-        ).format('DD-MMM-YYYY')}`
+        ).format('DD-MM-YYYY')}`
           .toLowerCase()
           ?.includes(lowerTitle) ||
         item?.state_name?.toLowerCase()?.includes(lowerTitle) ||

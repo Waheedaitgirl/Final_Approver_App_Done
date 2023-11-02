@@ -44,13 +44,12 @@ const Item = ({
   amount,
   filename,
   expense_receipt,
-  approver_comments='',
+  approver_comments = '',
   expense_comments,
   Linking,
-  com,setCom
+  com,
+  setCom,
 }) => {
-
- 
   const getFileExtention = fileUrl => {
     // To get the file extension
     return /[.]/.exec(fileUrl) ? /[^.]+$/.exec(fileUrl) : undefined;
@@ -58,7 +57,7 @@ const Item = ({
   const navigation = useNavigation();
   const [ext, setExt] = useState(null);
   useEffect(() => {
-    setCom(approver_comments)
+    setCom(approver_comments);
     setExt(getFileExtention(filename));
   }, []);
   return (
@@ -89,7 +88,8 @@ const Item = ({
         <View style={styles.row}>
           <View>
             <Text style={styles.buleText}>Amount:</Text>
-            <Text includeFontPadding={false} style={styles.title}>${amount}
+            <Text includeFontPadding={false} style={styles.title}>
+              ${amount}
             </Text>
           </View>
           <View>
@@ -188,17 +188,19 @@ const Item = ({
               </View>
             )}
             {/* {approver_comments !== null && approver_comments !== '' && ( */}
-              <View>
-                <Text style={styles.buleText}>Approver Comments:</Text>
+            <View>
+              <Text style={styles.buleText}>Approver Comments:</Text>
 
-                <TextInput style={styles.title}
+              <TextInput
+                style={styles.title}
                 value={com}
                 onChangeText={setCom}
                 placeholder={''}
                 underlineColorAndroid={'transparent'}
-                autoCorrect={true} autoFocus={true}
-                />
-              </View>
+                autoCorrect={true}
+                autoFocus={true}
+              />
+            </View>
             {/* )} */}
           </View>
         </View>
@@ -215,9 +217,9 @@ const Item = ({
   );
 };
 
-const ExpenseDetailsScreen = ({navigation, route,}) => {
+const ExpenseDetailsScreen = ({navigation, route}) => {
   const [logs, setLogs] = useState([]);
-  const [com,setCom] = useState('')
+  const [com, setCom] = useState('');
   const {user} = useSelector(state => state.LoginReducer);
   const [isModalVisible, setModalVisible] = useState(false);
   const [error, setError] = useState(false);
@@ -225,12 +227,12 @@ const ExpenseDetailsScreen = ({navigation, route,}) => {
   const [data, setData] = useState([]);
   let item = route.params.item;
   const status = item.module_status_name;
-  
+
   useEffect(() => {
     getExpensesDetails(user.account_id, item.expense_id)
       .then(response => {
         if (response.status === 200) {
-           console.log(response.data.logs);
+          console.log(response.data.logs);
           setLoading(false);
           setLogs(response.data.logs);
         } else {
@@ -245,36 +247,38 @@ const ExpenseDetailsScreen = ({navigation, route,}) => {
       });
   }, []);
 
-  const onStatusHandler = useCallback((expense_id, statusCode) => {
-
-    Alert.alert(
-      'Attention!',
-      `Are you sure you want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
-      [
-        {
-          text: 'No',
-          onPress: () => {},
-        },
-        {
-          text: 'Yes',
-          onPress: () => {
-            statusCode === 1
-              ? route.params?.onAccept(expense_id,com)
-              : route.params?.OnRejected(expense_id,com);
-
-            navigation?.goBack();
+  const onStatusHandler = useCallback(
+    (expense_id, statusCode) => {
+      Alert.alert(
+        'Attention!',
+        `Are you sure you want to ${statusCode === 0 ? 'Reject' : 'Approve'}?`,
+        [
+          {
+            text: 'No',
+            onPress: () => {},
           },
-          style: 'cancel',
-        },
-      ],
-    );
-  }, [com]);
+          {
+            text: 'Yes',
+            onPress: () => {
+              statusCode === 1
+                ? route.params?.onAccept(expense_id, com)
+                : route.params?.OnRejected(expense_id, com);
+
+              navigation?.goBack();
+            },
+            style: 'cancel',
+          },
+        ],
+      );
+    },
+    [com],
+  );
 
   if (loading) {
     return (
       <SafeAreaProvider>
         {/* <CustomStatusBar /> */}
-       {/* <SafeAreaView style = {commonStyles.container}> */}
+        {/* <SafeAreaView style = {commonStyles.container}> */}
         {/* <CustomHeader
           show_backButton={true}
           isdrawer={false}
@@ -342,9 +346,8 @@ const ExpenseDetailsScreen = ({navigation, route,}) => {
             />
           )}
           {logs.map((item, index) => {
- 
             return (
-              <View key={`${index}`}> 
+              <View key={`${index}`}>
                 <Item
                   date={moment(item.expense_date).format('MMM-DD-YYYY')}
                   expense_type={item.expense_type_name}

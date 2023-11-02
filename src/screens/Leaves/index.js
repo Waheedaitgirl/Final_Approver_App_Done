@@ -102,10 +102,9 @@ const AllLeavesScreen = ({navigation}) => {
   // moment(item?.created_date).format("DD-MMM-YYYY").toLowerCase()?.includes(lowerTitle) ||
 
   const FilterByTitle = title => {
-    // const regex = new RegExp(`${lowerTitle} , "i"`);
     let lowerTitle = title.toLowerCase();
     let draft_data = data?.filter(item => {
-      console.log('chawal', item);
+      console.log('checking', item);
 
       let itemStatus = '';
       if (item?.status === '0') {
@@ -124,22 +123,14 @@ const AllLeavesScreen = ({navigation}) => {
      return(
         item?.policy_name?.toLowerCase()?.includes(lowerTitle) ||
         item?.candidate_name?.toLowerCase()?.includes(lowerTitle) ||
-        // moment(item?.end_date)
-        //   .format('DD-MMM-YYYY')
-        //   ?.toLowerCase()
-        //   ?.includes(lowerTitle) ||
-
         moment(item?.requested_date)
-          .format('DD-MMM-YYYY HH:mm A')
+          .format('DD-MMM-YYYY hh:mm a')
           ?.toLowerCase()
           ?.includes(lowerTitle) ||
         item?.requested_hours?.toLowerCase()?.includes(lowerTitle) ||
-        // `${moment(item?.start_date).format('DD-MMM-YYYY')} - ${moment(
-        //   item?.end_date,
-        // ).format('DD-MMM-YYYY')}`
-        `${moment(item?.start_date).format('DD-MMM-YYYY')} - ${moment(
+        `${moment(item?.start_date).format('DD-MM-YYYY')} - ${moment(
           item?.end_date,
-        ).format('DD-MMM-YYYY')}`
+        ).format('DD-MM-YYYY')}`
           ?.toLowerCase()
           ?.includes(lowerTitle) ||
         item?.state_name?.toLowerCase()?.includes(lowerTitle) ||
@@ -153,15 +144,7 @@ const AllLeavesScreen = ({navigation}) => {
 
     console.log(draft_data);
     setFilterData(draft_data);
-
-    // item?.is_half_day?.toLowerCase()?.includes(lowerTitle) ||
-    // item?.is_paid?.toLowerCase()?.includes(lowerTitle) ||
-    // item?.leave_policy_id?.toLowerCase()?.includes(lowerTitle) ||
-    // item?.leave_request_id?.toLowerCase()?.includes(lowerTitle) ||
-    // item?.maximum_leaves?.toLowerCase()?.includes(lowerTitle) ||
-    // item?.module_id?.toLowerCase()?.includes(lowerTitle) ||
-    // item?.requested_by?.toLowerCase()?.includes(lowerTitle) ||
-  };
+    };
   getLeavesListLocal = () => {
     setLoading(true);
     // console.log(

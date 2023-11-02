@@ -32,7 +32,7 @@ const LeaveCard = memo(({item,onPress}) => {
                 <View style={{width:scale(20), height:scale(20)}} >
                     <FontAwesome  size={scale(20)} name={"users"} color={colors.dark_primary_color} />
                 </View>
-                <Text style={styles.textStyle}>{item.candidate_name}</Text>
+                <Text style={styles.textStyle}>{item.candidate_name.replaceAll('&amp;','&')}</Text>
             </View>
            
             <View   
@@ -54,7 +54,7 @@ const LeaveCard = memo(({item,onPress}) => {
                 <View style={{width:scale(20), height:scale(20)}} >
                     <Entypo size={scale(20)} name={"calendar"} color={colors.dark_primary_color} />
                 </View>
-                <Text style={styles.textStyle}>{moment(item.start_date).format("DD-MMM-YYYY")} - {moment(item.end_date).format("DD-MMM-YYYY")}</Text>
+                <Text style={styles.textStyle}>{moment(item.start_date).format("DD-MM-YYYY")} - {moment(item.end_date).format("DD-MM-YYYY")}</Text>
             </View>
             <View   
                 style={styles.btnView}>

@@ -9,7 +9,6 @@ import {
   View,
 } from 'react-native';
 import { scale } from 'react-native-size-matters';
-
 import { Alert } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import { HamburgerIcon } from 'native-base';
@@ -44,13 +43,23 @@ const ImageViewScreen = ({ route }) => {
         },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Granted');
-        // return true;
-        //     console.log('You can use the camera');
+        //  PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
        } 
-      //  else {
-      //   console.log('Storage permission denied');
-      // }
+       else {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Download file storage Permission',
+            message:
+              'Downloader file needs to access storage ' +
+              'you can download file.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        console.log('Storage permission denied',granted);
+      }
     } catch (err) {
       console.warn(err);
     }
